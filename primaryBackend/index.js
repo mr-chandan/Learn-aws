@@ -30,19 +30,3 @@ app.post('/test', async (req, res) => {
 app.listen(3000, () => {
     console.log('Primary Backend Server is running on port 3000');
 });
-
-
-
-
-// rsync -avz --exclude 'node_modules' --exclude '.git' --exclude '.env' \
-// -e "ssh -i ~/.ssh/mynewkeypair.pem" \
-// . ubuntu@ec2-16-170-15-232.eu-north-1.compute.amazonaws.com:~/app
-
-
-// rsync -avz --exclude 'node_modules' --exclude '.git' --exclude '.env' \
-// -e "ssh -i "mynewkeypair.pem" ubuntu@ec2-16-170-15-232.eu-north-1.compute.amazonaws.com
-
-
-rsync -avz --exclude 'node_modules' --exclude '.git' --exclude '.env' \
--e "ssh -i ~/.ssh/mynewkeypair.pem" \
-. ubuntu@ip-address:~/app
