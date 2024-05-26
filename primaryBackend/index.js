@@ -1,32 +1,30 @@
-const express = require('express');
-const AWS = require('aws-sdk');
+const { exec } = require('child_process');
 
-const app = express();
-app.use(express.json());
-
-const sqs = new AWS.SQS({ region: 'eu-north-1' });
-const queueUrl = 'https://sqs.eu-north-1.amazonaws.com/058264394403/Processingqueue.fifo';
-
-
-app.post('/test', async (req, res) => {
-    const params = {
-        MessageBody: "Information about current NY Times fiction bestseller for week of 12/11/2016.",
-        QueueUrl: queueUrl,
-        MessageGroupId: "Group1",
-        MessageDeduplicationId: "Message1"
-    };
-
-    sqs.sendMessage(params, (err, data) => {
-        if (err) {
-            console.error("Error submitting answer to SQS:", err);
-            res.status(500).json({ error: "Failed to submit answer" });
-        } else {
-            res.json({ message: "Answer submitted successfully" });
-        }
+// Function to execute Python code
+const executePythonCode = (code) => {
+    return new Promise((resolve, reject) => {
+        // Use 'python3' to ensure compatibility with Python 3.x
+        exec(`python3 -c "${code.replace(/"/g, '\\"')}"`, (error, stdout, stderr) => {
+            if (error) {
+                // If there's an error, reject with the error message
+                reject(stderr.toString().trim());
+            } else {
+                // If successful, resolve with the output
+                resolve(stdout.toString().trim());
+            }
+        });
     });
-});
+};
 
+// Usage example
+const pythonCode = `
+print(1 + 2)
+`;
 
-app.listen(3000, () => {
-    console.log('Primary Backend Server is running on port 3000');
-});
+executePythonCode(pythonCode)
+    .then(output => {
+        console.log("Output:", output);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
